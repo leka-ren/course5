@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-mongoose.connect(`${baseUrl}`, {
+mongoose.connect(baseUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
