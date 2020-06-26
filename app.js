@@ -25,6 +25,8 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
+app.use((req, res) => res.status(404).send({ message: `404 такой страницы не существует` }));
+
 app.listen(PORT, () => {
   console.log(`Server started, listening on ${PORT}`);
 });
