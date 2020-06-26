@@ -21,12 +21,12 @@ const cardSchema = new mongoose.Schema({
     required: true,
   },
   likes: {
-    type: Array,
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }], // ??
     default: [],
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: new Date(),
   },
 });
 
