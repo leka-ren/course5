@@ -18,8 +18,10 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .then((card) => {
-      if (card.data !== null) {
+      if (card !== null) {
         res.send({ data: card });
+      } else {
+        res.status(404).send({ message: 'card has not found' });
       }
     })
     .catch(() => res.status(404).send({ message: 'card does not exist' }));
