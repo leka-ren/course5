@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const regex = require('../regExp/urlValid');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -17,7 +18,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     validate: {
       // eslint-disable-next-line no-useless-escape
-      validator: (str) => /(^https?:\/\/)?[a-z0-9~_\-\.]+\.[a-z]{1,9}[aA-zZ0-9~_\-\.\/?=&]+/.test(str),
+      validator: (str) => regex.test(str),
     },
     required: true,
   },
