@@ -48,24 +48,24 @@ ____
 
 ## Форматы для запросов Card
 
-#### GET 
+### GET 
 - запрос всех карточек по адресу - http://somehost:0000/cards
 - поиск одной карточки по id - http://somehost:0000/cards/:someid (24-символьный хэш id)
 
-#### POST запрос
+### POST запрос
 
 - адрес - http://somehost:0000/cards/
 - json объект: {"name": "card name", "link": "http://linkcardimg.co"}
 
-#### DELETE запрос *удаление карточки
+### DELETE запрос *удаление карточки
 
 - адрес - http://somehost:0000/cards/:someid
 
-#### PUT запрос на лайк
+### PUT запрос на лайк
 
 - адрес - http://somehost:0000/cards/:someid/likes
 
-#### DELETE запрос *удаление лайка с карточки
+### DELETE запрос *удаление лайка с карточки
 
 - адрес - http://somehost:0000/cards/:someid/likes
 
