@@ -18,16 +18,16 @@ ____
 
 ____
 
-## Форматы запросов для User
+## Запросы к контроллеру User
 
 ### GET запрос
 
-- запрос данных юзера осуществляется по url  http://somehost:0000/users
-- Поиск по id - http://somehost:0000/users/:someid (24-символьный хэш id)
+- запрос данных юзера осуществляется по url /users
+- Поиск по id - users/:someid (24-символьный хэш id)
 
 ### POST запрос
 
-- url - http://somehost:0000/users
+- url - /users
 - json объект: {"name": "My Name", "about": "about me", "avatar": "http://link.co"}
 
 ### PATCH запрос
@@ -36,37 +36,37 @@ Update информации в объекте происходит раздел�
 
 #### Name
 
-- name & about url - http://somehost:0000/users/me
+- name & about url - /users/me
 - json объект: {"name": "new name", "about": "my new inform"}
 
 #### About
 
-- avatar url - http://somehost:0000/users/me/avatar
+- avatar url - /users/me/avatar
 - json объект: {"avatar": "http://newavatar.co"}
 
 ____
 
-## Форматы для запросов Card
+## Запросы к контроллеру Card
 
 ### GET 
-- запрос всех карточек по url  - http://somehost:0000/cards
-- поиск одной карточки по id - http://somehost:0000/cards/:someid (24-символьный хэш id)
+- запрос всех карточек по url  - /cards
+- поиск одной карточки по id - /cards/:someid (24-символьный хэш id)
 
 ### POST запрос
 
-- url - http://somehost:0000/cards/
+- url - /cards
 - json объект: {"name": "card name", "link": "http://linkcardimg.co"}
 
 ### DELETE запрос *удаление карточки
 
-- url - http://somehost:0000/cards/:someid
+- url - /cards/:someid
 
 ### PUT запрос на лайк
 
-- url - http://somehost:0000/cards/:someid/likes
+- url - /cards/:someid/likes
 
 ### DELETE запрос *удаление лайка с карточки
 
-- url - http://somehost:0000/cards/:someid/likes
+- url - /cards/:someid/likes
 
 ____
