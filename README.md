@@ -18,6 +18,7 @@ ____
 - npm install - устанвока зависимостей
 - npm run start - для запуска на локальном сервере
 - npm run dev - develop запуск, hot reload
+
 *Дефолтный url локального запуска - http://localhost:3000/
 ____
 
