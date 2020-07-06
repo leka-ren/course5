@@ -1,12 +1,15 @@
-# PROJECT 13
+# Курс 5
 
-Серверная разработка express.js
+Серверная разработка express.js, для проекта MESTO
 
 ____
 
 ## Что использовалось
 
+- [NodeJS](https://nodejs.org/en/)
 - [Библиотека пакетов NPM](https://nodejs.org/en/download/)
+- [MongoDB Compass](https://www.mongodb.com/products/compass)
+- [Postman](https://www.postman.com/)
 
 ____
 
