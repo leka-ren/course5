@@ -37,10 +37,13 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      console.log(card._id);
-      if (card._id) res.status(200).send(card);
+      if (!card) {
+        res.status(404).send({ message: 'card`s not found' });
+      } else {
+        res.status(200).send(card);
+      }
     })
-    .catch(() => res.status(404).send({ message: 'somthing wrong' }));
+    .catch(() => res.status(500).send({ message: 'somthing wrong' }));
 };
 
 module.exports.deleteLikeCard = (req, res) => {
@@ -51,6 +54,12 @@ module.exports.deleteLikeCard = (req, res) => {
     },
     { new: true },
   )
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'card`s not found' });
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch(() => res.status(404).send({ message: 'somthing wrong' }));
 };

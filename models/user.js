@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const valid = require('validator');
 const regex = require('../regExp/urlValid');
 
 const userSchema = new mongoose.Schema({
@@ -20,6 +21,17 @@ const userSchema = new mongoose.Schema({
       // eslint-disable-next-line no-useless-escape
       validator: (str) => regex.test(str),
     },
+    required: true,
+  },
+  email: {
+    type: String,
+    validate: {
+      validator: (str) => valid.isEmail(str),
+    },
+    required: true,
+  },
+  password: {
+    type: String,
     required: true,
   },
 });
