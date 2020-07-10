@@ -1,4 +1,5 @@
 // eslint-disable-next-line quotes
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
@@ -13,7 +14,6 @@ module.exports.getUsersById = (req, res) => {
       if (user !== null) {
         res.status(200).send({ data: user });
       } else {
-        // eslint-disable-next-line quotes
         res.status(404).send({ message: 'user has not found' });
       }
     })
@@ -21,10 +21,24 @@ module.exports.getUsersById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  // eslint-disable-next-line object-curly-newline
+  const { name, about, avatar, email, password } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.status(200).send({ data: user }))
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+        .then((user) => {
+          res.status(200).send({ data: user });
+        })
+        .catch((err) => res.status(400).send({ message: err.message }));
+    })
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
