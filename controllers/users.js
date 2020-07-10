@@ -1,23 +1,27 @@
 // eslint-disable-next-line quotes
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err.message }));
-};
-
-module.exports.getUsersById = (req, res) => {
-  User.findById(req.params.id)
+module.exports.login = (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
     .then((user) => {
-      if (user !== null) {
-        res.status(200).send({ data: user });
-      } else {
-        res.status(404).send({ message: 'user has not found' });
-      }
+      const token = jwt.sign({ _id: user._id }, user.password, {
+        expiresIn: '7d',
+      });
+      // eslint-disable-next-line max-len
+      // не уверена что секретное супер мега слово может быть паролем для токена, но так как тут мы используем хэш, мне показалось, что это оптимальное решение на данном этапе.
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      });
+      res.status(200).send({ message: 'authorezed' });
     })
-    .catch((err) => res.status(404).send({ message: err.message }));
+    .catch(() => {
+      res.status(401).send({ message: 'Неправильные почта или пароль' });
+    });
 };
 
 module.exports.createUser = (req, res) => {
@@ -42,6 +46,24 @@ module.exports.createUser = (req, res) => {
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
+module.exports.getUsers = (req, res) => {
+  User.find({})
+    .then((users) => res.status(200).send({ data: users }))
+    .catch((err) => res.status(500).send({ message: err.message }));
+};
+
+module.exports.getUsersById = (req, res) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (user !== null) {
+        res.status(200).send({ data: user });
+      } else {
+        res.status(404).send({ message: 'user has not found' });
+      }
+    })
+    .catch((err) => res.status(404).send({ message: err.message }));
+};
+
 module.exports.patchUser = (req, res) => {
   const { name, about } = req.body;
   const owner = req.user._id;
@@ -58,18 +80,4 @@ module.exports.patchAvatar = (req, res) => {
   User.findByIdAndUpdate(owner, { avatar }, { new: true })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
-};
-
-module.exports.login = (req, res) => {
-  // eslint-disable-next-line no-unused-vars
-  const { email, pass } = req.body;
-  User.findUserByCredentials({ email })
-    .then((user) => {
-      if (!user) {
-        res.status(401).send();
-      } else {
-        res.status(200).send(user);
-      }
-    })
-    .catch((e) => res.status(500).send({ message: e }));
 };
