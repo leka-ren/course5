@@ -14,10 +14,10 @@ module.exports.login = (req, res) => {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
       });
-      res.status(200).send({ message: 'Аутентификация прошла успешно' });
+      res.status(200).send({ message: 'Authentication was successful' });
     })
     .catch(() => {
-      res.status(401).send({ message: 'Неправильные почта или пароль' });
+      res.status(401).send({ message: 'Wrong email or password' });
     });
 };
 
@@ -27,17 +27,18 @@ module.exports.createUser = (req, res) => {
 
   bcrypt
     .hash(password, 10)
-    .then(() => {
+    .then((hash) => {
       User.create({
         name,
         about,
         avatar,
         email,
+        password: hash,
       })
         .then((user) => {
           res.status(200).send({ data: user });
         })
-        .catch((err) => res.status(400).send({ message: err.message }));
+        .catch(() => res.status(400).send({ message: 'User already registered' }));
     })
     .catch((err) => res.status(500).send({ message: err.message }));
 };
