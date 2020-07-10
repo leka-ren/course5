@@ -59,3 +59,17 @@ module.exports.patchAvatar = (req, res) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
+
+module.exports.login = (req, res) => {
+  // eslint-disable-next-line no-unused-vars
+  const { email, pass } = req.body;
+  User.findUserByCredentials({ email })
+    .then((user) => {
+      if (!user) {
+        res.status(401).send();
+      } else {
+        res.status(200).send(user);
+      }
+    })
+    .catch((e) => res.status(500).send({ message: e }));
+};

@@ -17,6 +17,11 @@ mongoose.connect(baseUrl, {
   useFindAndModify: false,
 });
 
+let login;
+let createUser;
+app.post('/signin', login);
+app.post('/signup', createUser);
+
 app.use((req, res, next) => {
   req.user = { _id: '5ef5bc2383593d8ea79dc611' };
 
