@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 module.exports.login = (req, res) => {
-  // eslint-disable-next-line no-unused-vars
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
