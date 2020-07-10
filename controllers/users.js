@@ -61,10 +61,9 @@ module.exports.getUsersById = (req, res) => {
 };
 
 module.exports.patchUser = (req, res) => {
-  const { name, about } = req.body;
-  const owner = req.user;
+  const owner = req.user._id;
 
-  User.findByIdAndUpdate(owner, { name, about }, { new: true })
+  User.findByIdAndUpdate(owner, { ...req.body }, { new: true })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
