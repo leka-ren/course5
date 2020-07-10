@@ -7,16 +7,14 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, user.password, {
+      const token = jwt.sign({ _id: user._id }, 'qscwdvefb10537', {
         expiresIn: '7d',
       });
-      // eslint-disable-next-line max-len
-      // не уверена что секретное супер мега слово может быть паролем для токена, но так как тут мы используем хэш, мне показалось, что это оптимальное решение на данном этапе.
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
       });
-      res.status(200).send({ message: 'authorezed' });
+      res.status(200).send({ message: 'Аутентификация прошла успешно' });
     })
     .catch(() => {
       res.status(401).send({ message: 'Неправильные почта или пароль' });
@@ -29,13 +27,12 @@ module.exports.createUser = (req, res) => {
 
   bcrypt
     .hash(password, 10)
-    .then((hash) => {
+    .then(() => {
       User.create({
         name,
         about,
         avatar,
         email,
-        password: hash,
       })
         .then((user) => {
           res.status(200).send({ data: user });
@@ -65,7 +62,7 @@ module.exports.getUsersById = (req, res) => {
 
 module.exports.patchUser = (req, res) => {
   const { name, about } = req.body;
-  const owner = req.user._id;
+  const owner = req.user;
 
   User.findByIdAndUpdate(owner, { name, about }, { new: true })
     .then((user) => res.status(200).send({ data: user }))
@@ -74,7 +71,7 @@ module.exports.patchUser = (req, res) => {
 
 module.exports.patchAvatar = (req, res) => {
   const { avatar } = req.body;
-  const owner = req.user._id;
+  const owner = req.user;
 
   User.findByIdAndUpdate(owner, { avatar }, { new: true })
     .then((user) => res.status(200).send({ data: user }))

@@ -8,7 +8,7 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.user;
 
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
@@ -16,23 +16,30 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findById(req.params.id)
     .then((card) => {
-      if (card !== null) {
-        res.send({ data: card });
+      if (card.owner.toString() === req.user._id) {
+        Card.findByIdAndRemove(req.params.id)
+          .then((findCard) => {
+            if (findCard !== null) {
+              res.send({ data: findCard });
+            } else {
+              res.status(404).send({ message: 'card has not found' });
+            }
+          })
+          .catch(() => res.status(500).send({ message: 'something wrong' }));
       } else {
-        res.status(404).send({ message: 'card has not found' });
+        res.status(403).send({ message: 'forbidden' });
       }
     })
-    .catch(() => res.status(404).send({ message: 'card does not exist' }));
+    .catch(() => res.status(500).send({ message: 'something wrong' }));
 };
 
-// eslint-disable-next-line no-unused-vars
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
-      $addToSet: { likes: req.user._id },
+      $addToSet: { likes: req.user },
     },
     { new: true },
   )
@@ -50,7 +57,7 @@ module.exports.deleteLikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
-      $pull: { likes: req.user._id },
+      $pull: { likes: req.user },
     },
     { new: true },
   )
