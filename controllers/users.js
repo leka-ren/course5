@@ -35,8 +35,8 @@ module.exports.createUser = (req, res) => {
         email,
         password: hash,
       })
-        .then((user) => {
-          res.status(200).send({ data: user });
+        .then(() => {
+          res.status(200).send({ message: 'You are registered!' });
         })
         .catch(() => res.status(400).send({ message: 'User already registered' }));
     })
@@ -64,7 +64,7 @@ module.exports.getUsersById = (req, res) => {
 module.exports.patchUser = (req, res) => {
   const owner = req.user._id;
 
-  User.findByIdAndUpdate(owner, { ...req.body }, { new: true })
+  User.findByIdAndUpdate(owner, { ...req.body }, { new: true, runValidators: true })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
@@ -73,7 +73,7 @@ module.exports.patchAvatar = (req, res) => {
   const { avatar } = req.body;
   const owner = req.user;
 
-  User.findByIdAndUpdate(owner, { avatar }, { new: true })
+  User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
