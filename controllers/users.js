@@ -38,7 +38,13 @@ module.exports.createUser = (req, res) => {
         .then(() => {
           res.status(200).send({ message: 'You are registered!' });
         })
-        .catch(() => res.status(400).send({ message: 'User already registered' }));
+        .catch((e) => {
+          if (e.name === 'ValidationError') {
+            res.status(400).send({ message: `${e}` });
+          } else {
+            res.status(400).send({ message: 'User already registered' });
+          }
+        });
     })
     .catch((err) => res.status(500).send({ message: err.message }));
 };
@@ -64,7 +70,11 @@ module.exports.getUsersById = (req, res) => {
 module.exports.patchUser = (req, res) => {
   const owner = req.user._id;
 
-  User.findByIdAndUpdate(owner, { ...req.body }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(
+    owner,
+    { ...req.body },
+    { new: true, runValidators: true },
+  )
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };

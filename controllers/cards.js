@@ -12,7 +12,13 @@ module.exports.createCard = (req, res) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'validation link failed' });
+      } else {
+        res.status(500).send({ message: 'somthing wrong' });
+      }
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
