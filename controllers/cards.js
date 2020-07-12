@@ -8,26 +8,38 @@ module.exports.getCards = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.user;
 
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'validation link failed' });
+      } else {
+        res.status(500).send({ message: 'somthing wrong' });
+      }
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findById(req.params.id)
+    .orFail(() => res.status(404).send({ message: 'card has not found' }))
     .then((card) => {
-      if (card !== null) {
-        res.send({ data: card });
+      if (card.owner.toString() === req.user._id) {
+        Card.findByIdAndRemove(req.params.id)
+          .then((findCard) => {
+            if (findCard !== null) res.send({ data: findCard });
+          })
+          .catch(() => {
+            res.status(500).send({ message: 'something wrong' });
+          });
       } else {
-        res.status(404).send({ message: 'card has not found' });
+        res.status(403).send({ message: 'forbidden' });
       }
     })
-    .catch(() => res.status(404).send({ message: 'card does not exist' }));
+    .catch(() => res.status(500).send({ message: 'something wrong' }));
 };
 
-// eslint-disable-next-line no-unused-vars
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -37,10 +49,13 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      console.log(card._id);
-      if (card._id) res.status(200).send(card);
+      if (!card) {
+        res.status(404).send({ message: 'card`s not found' });
+      } else {
+        res.status(200).send(card);
+      }
     })
-    .catch(() => res.status(404).send({ message: 'somthing wrong' }));
+    .catch(() => res.status(500).send({ message: 'somthing wrong' }));
 };
 
 module.exports.deleteLikeCard = (req, res) => {
@@ -51,6 +66,12 @@ module.exports.deleteLikeCard = (req, res) => {
     },
     { new: true },
   )
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'card`s not found' });
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch(() => res.status(404).send({ message: 'somthing wrong' }));
 };
