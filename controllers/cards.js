@@ -23,7 +23,7 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findById(req.params.id)
-    .orFail()
+    .orFail(() => res.status(404).send({ message: 'card has not found' }))
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(req.params.id)
@@ -37,13 +37,7 @@ module.exports.deleteCard = (req, res) => {
         res.status(403).send({ message: 'forbidden' });
       }
     })
-    .catch((e) => {
-      if (e.name === 'DocumentNotFoundError') {
-        res.status(404).send({ message: 'card has not found' });
-      } else {
-        res.status(500).send({ message: 'something wrong' });
-      }
-    });
+    .catch(() => res.status(500).send({ message: 'something wrong' }));
 };
 
 module.exports.likeCard = (req, res) => {
