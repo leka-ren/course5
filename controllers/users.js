@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
@@ -17,11 +17,13 @@ module.exports.login = (req, res) => {
       res.status(200).send({ message: 'Authentication was successful' });
     })
     .catch(() => {
-      res.status(401).send({ message: 'Wrong email or password' });
+      const err = new Error('Wrong email or password');
+      err.statusCode = 401;
+      next(err);
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   // eslint-disable-next-line object-curly-newline
   const { name, about, avatar, email, password } = req.body;
 
@@ -40,34 +42,40 @@ module.exports.createUser = (req, res) => {
         })
         .catch((e) => {
           if (e.name === 'ValidationError') {
-            res.status(400).send({ message: `${e}` });
+            const err = new Error(`${e}`);
+            err.statusCode = 400;
+            next(err);
           } else {
-            res.status(400).send({ message: 'User already registered' });
+            const err = new Error('User already registered');
+            err.statusCode = 400;
+            next(err);
           }
         });
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(200).send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.getUsersById = (req, res) => {
+module.exports.getUsersById = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (user !== null) {
         res.status(200).send({ data: user });
       } else {
-        res.status(404).send({ message: 'user has not found' });
+        const err = new Error('user has not found');
+        err.statusCode = 404;
+        next(err);
       }
     })
-    .catch((err) => res.status(404).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.patchUser = (req, res) => {
+module.exports.patchUser = (req, res, next) => {
   const owner = req.user._id;
 
   User.findByIdAndUpdate(
@@ -76,14 +84,18 @@ module.exports.patchUser = (req, res) => {
     { new: true, runValidators: true },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.patchAvatar = (req, res) => {
+module.exports.patchAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const owner = req.user;
 
-  User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(
+    owner,
+    { avatar },
+    { new: true, runValidators: true },
+  )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
