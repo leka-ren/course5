@@ -19,6 +19,7 @@ mongoose.connect(baseUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 });
 
 app.post('/signin', login);
@@ -30,6 +31,12 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => res.status(404).send({ message: '404 has not found' }));
+
+app.use((err, req, res) => {
+  res.status(err.statusCode).send({
+    message: err.statusCode === 500 ? 'Server error' : err.message,
+  });
+});
 
 // eslint-disable-next-line no-console
 app.listen(PORT, () => console.log(`Server started, listening on ${PORT}`));

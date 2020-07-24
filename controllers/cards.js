@@ -1,46 +1,45 @@
 const Card = require('../models/card');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(200).send({ data: cards }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user;
 
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'validation link failed' });
-      } else {
-        res.status(500).send({ message: 'somthing wrong' });
-      }
+    .catch(() => {
+      const err = new Error('validation link failed');
+      err.statusCode = 400;
+
+      next(err);
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
-    .orFail(() => res.status(404).send({ message: 'card has not found' }))
+    .orFail(() => new Error('card has not found'))
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(req.params.id)
           .then((findCard) => {
             if (findCard !== null) res.send({ data: findCard });
           })
-          .catch(() => {
-            res.status(500).send({ message: 'something wrong' });
-          });
+          .catch(next);
       } else {
-        res.status(403).send({ message: 'forbidden' });
+        const err = new Error('forbidden');
+        err.statusCode = 403;
+        next(err);
       }
     })
-    .catch(() => res.status(500).send({ message: 'something wrong' }));
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
@@ -50,15 +49,17 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'card`s not found' });
+        const err = new Error('card`s not found');
+        err.statusCode = 404;
+        next(err);
       } else {
         res.status(200).send(card);
       }
     })
-    .catch(() => res.status(500).send({ message: 'somthing wrong' }));
+    .catch(next);
 };
 
-module.exports.deleteLikeCard = (req, res) => {
+module.exports.deleteLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
@@ -68,10 +69,12 @@ module.exports.deleteLikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'card`s not found' });
+        const err = new Error('card`s not found');
+        err.statusCode = 404;
+        next(err);
       } else {
         res.status(200).send(card);
       }
     })
-    .catch(() => res.status(404).send({ message: 'somthing wrong' }));
+    .catch(next);
 };
