@@ -30,12 +30,14 @@ app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.use((req, res) => res.status(404).send({ message: '404 has not found' }));
+app.use((req, res, next) => {
+  const err = new Error('404 has not found');
+  err.statusCode = 404;
+  next(err);
+});
 
 app.use((err, req, res) => {
-  res.status(err.statusCode).send({
-    message: err.statusCode === 500 ? 'Server error' : err.message,
-  });
+  res.status(err.statusCode).send(err);
 });
 
 // eslint-disable-next-line no-console

@@ -8,12 +8,16 @@ module.exports = (req, res, next) => {
     let payload;
     try {
       payload = jwt.verify(cookieToken, 'qscwdvefb10537');
-    } catch (err) {
-      return res.status(401).send({ message: 'Need to login' });
+    } catch (e) {
+      const err = new Error('Need to login');
+      err.statusCode = 401;
+      next(err);
     }
     req.user = payload;
   } else {
-    return res.status(401).send({ message: 'Need to login' });
+    const err = new Error('Need to login');
+    err.statusCode = 401;
+    next(err);
   }
   next();
 };

@@ -16,8 +16,9 @@ module.exports.login = (req, res, next) => {
       });
       res.status(200).send({ message: 'Authentication was successful' });
     })
-    .catch(() => {
-      const err = new Error('Wrong email or password');
+    // eslint-disable-next-line no-unused-vars
+    .catch((e) => {
+      const err = new Error(e.message);
       err.statusCode = 401;
       next(err);
     });
@@ -67,7 +68,7 @@ module.exports.getUsersById = (req, res, next) => {
       if (user !== null) {
         res.status(200).send({ data: user });
       } else {
-        const err = new Error('user has not found');
+        const err = new Error('User has not found');
         err.statusCode = 404;
         next(err);
       }

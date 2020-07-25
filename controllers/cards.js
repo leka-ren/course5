@@ -12,7 +12,8 @@ module.exports.createCard = (req, res, next) => {
 
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
-    .catch(() => {
+    // eslint-disable-next-line no-unused-vars
+    .catch((e) => {
       const err = new Error('validation link failed');
       err.statusCode = 400;
 
