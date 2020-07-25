@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const regex = require('../regExp/urlValid');
+const regexUrl = require('../regExp/urlValid');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -13,7 +13,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     validate: {
       // eslint-disable-next-line no-useless-escape
-      validator: (str) => regex.test(str),
+      validator: (str) => regexUrl.test(str),
     },
     required: true,
   },

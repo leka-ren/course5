@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const valid = require('validator');
-const regex = require('../regExp/urlValid');
+const regexUrl = require('../regExp/urlValid');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     validate: {
-      validator: (str) => regex.test(str),
+      validator: (str) => regexUrl.test(str),
     },
     required: true,
   },
