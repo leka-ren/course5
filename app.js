@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 
 const { json } = require('body-parser');
@@ -14,6 +16,8 @@ const auth = require('./middlewares/auth');
 
 const regexUrl = require('./regExp/urlValid');
 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 const { PORT = 3000 } = process.env;
 const baseUrl = 'mongodb://localhost:27017/mestodb';
 
@@ -25,6 +29,8 @@ mongoose.connect(baseUrl, {
   useFindAndModify: false,
   useUnifiedTopology: true,
 });
+
+app.use(requestLogger);
 
 app.post(
   '/signin',
@@ -61,6 +67,8 @@ app.use((req, res, next) => {
   err.statusCode = 404;
   next(err);
 });
+
+app.use(errorLogger);
 
 app.use(errors());
 

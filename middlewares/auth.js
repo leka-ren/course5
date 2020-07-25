@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 // eslint-disable-next-line consistent-return
@@ -7,7 +8,7 @@ module.exports = (req, res, next) => {
 
     let payload;
     try {
-      payload = jwt.verify(cookieToken, 'qscwdvefb10537');
+      payload = jwt.verify(cookieToken, process.env.NODE_ENV === 'prod' ? process.env.JWT_SECRET : 'dev-secret');
     } catch (e) {
       const err = new Error('Need to login');
       err.statusCode = 401;
