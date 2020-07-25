@@ -18,7 +18,7 @@ const regexUrl = require('./regExp/urlValid');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3042 } = process.env;
 const baseUrl = 'mongodb://localhost:27017/mestodb';
 
 app.use(json());
