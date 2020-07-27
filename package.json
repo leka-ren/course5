@@ -4,8 +4,8 @@
   "description": "Backend for Mesto",
   "main": "app.js",
   "scripts": {
-    "dev": "NODE_ENV='dev' nodemon app.js",
-    "start": "NODE_ENV='prod' node app.js",
+    "dev": "cross-env NODE_ENV='dev' nodemon app.js",
+    "start": "cross-env NODE_ENV='prod' node app.js",
     "test": "jest"
   },
   "repository": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/leka-ren/pr13#readme",
   "devDependencies": {
+    "cross-env": "^7.0.2",
     "eslint": "^7.2.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.21.2",
