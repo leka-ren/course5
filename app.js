@@ -18,6 +18,8 @@ const regexUrl = require('./regExp/urlValid');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
+const NotFound = require('./customErrors/notFound');
+
 const { PORT = 3042 } = process.env;
 const baseUrl = 'mongodb://localhost:27017/mestodb';
 
@@ -69,17 +71,20 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res, next) => {
-  const err = new Error('404 has not found');
-  err.statusCode = 404;
-  next(err);
+  next(new NotFound('404 has not found'));
 });
 
 app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res) => {
-  res.status(err.statusCode).send(err);
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res.status(statusCode).send({
+    message: statusCode === 500 ? 'Somthing wrong on server' : message,
+  });
 });
 
 // eslint-disable-next-line no-console

@@ -3,6 +3,9 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const NotFound = require('../customErrors/notFound');
+const BadRequest = require('../customErrors/badRequest');
+const Unauthorized = require('../customErrors/unauthorized');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -19,9 +22,7 @@ module.exports.login = (req, res, next) => {
     })
     // eslint-disable-next-line no-unused-vars
     .catch((e) => {
-      const err = new Error(e.message);
-      err.statusCode = 401;
-      next(err);
+      next(new Unauthorized(e.message));
     });
 };
 
@@ -44,13 +45,9 @@ module.exports.createUser = (req, res, next) => {
         })
         .catch((e) => {
           if (e.name === 'ValidationError') {
-            const err = new Error(`${e}`);
-            err.statusCode = 400;
-            next(err);
+            next(new BadRequest(`${e}`));
           } else {
-            const err = new Error('User already registered');
-            err.statusCode = 400;
-            next(err);
+            next(new Unauthorized('User already registered'));
           }
         });
     })
@@ -69,9 +66,7 @@ module.exports.getUsersById = (req, res, next) => {
       if (user !== null) {
         res.status(200).send({ data: user });
       } else {
-        const err = new Error('User has not found');
-        err.statusCode = 404;
-        next(err);
+        next(new NotFound('User has not found'));
       }
     })
     .catch(next);

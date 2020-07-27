@@ -1,4 +1,9 @@
 const Card = require('../models/card');
+const NotFound = require('../customErrors/notFound');
+const BadRequest = require('../customErrors/badRequest');
+const ForbiddenError = require('../customErrors/forbiddenError');
+
+const CadrsErrorfound = new NotFound('card has not found');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -14,16 +19,13 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.status(200).send({ data: card }))
     // eslint-disable-next-line no-unused-vars
     .catch((e) => {
-      const err = new Error('validation link failed');
-      err.statusCode = 400;
-
-      next(err);
+      next(new BadRequest('validation link failed'));
     });
 };
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.id)
-    .orFail(() => new Error('card has not found'))
+    .orFail(() => CadrsErrorfound)
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         Card.findByIdAndRemove(req.params.id)
@@ -32,9 +34,7 @@ module.exports.deleteCard = (req, res, next) => {
           })
           .catch(next);
       } else {
-        const err = new Error('forbidden');
-        err.statusCode = 403;
-        next(err);
+        next(new ForbiddenError('forbidden'));
       }
     })
     .catch(next);
@@ -50,9 +50,7 @@ module.exports.likeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('card`s not found');
-        err.statusCode = 404;
-        next(err);
+        next(CadrsErrorfound);
       } else {
         res.status(200).send(card);
       }
@@ -70,9 +68,7 @@ module.exports.deleteLikeCard = (req, res, next) => {
   )
     .then((card) => {
       if (!card) {
-        const err = new Error('card`s not found');
-        err.statusCode = 404;
-        next(err);
+        next(CadrsErrorfound);
       } else {
         res.status(200).send(card);
       }
