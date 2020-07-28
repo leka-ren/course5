@@ -6,6 +6,7 @@ const User = require('../models/user');
 const NotFound = require('../customErrors/notFound');
 const BadRequest = require('../customErrors/badRequest');
 const Unauthorized = require('../customErrors/unauthorized');
+const AlradyRegistred = require('../customErrors/alradyRegistred');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -47,7 +48,7 @@ module.exports.createUser = (req, res, next) => {
           if (e.name === 'ValidationError') {
             next(new BadRequest(`${e}`));
           } else {
-            next(new Unauthorized('User already registered'));
+            next(new AlradyRegistred('User already registered'));
           }
         });
     })
