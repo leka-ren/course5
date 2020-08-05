@@ -14,9 +14,9 @@ const app = express();
 
 const auth = require('./middlewares/auth');
 
-const regexUrl = require('./regExp/urlValid');
-
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+
+const regexUrl = require('./regExp/urlValid');
 
 const NotFound = require('./customErrors/notFound');
 
@@ -33,12 +33,6 @@ mongoose.connect(baseUrl, {
 });
 
 app.use(requestLogger);
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
 
 app.post(
   '/signin',
