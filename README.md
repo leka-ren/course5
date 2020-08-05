@@ -3,6 +3,22 @@
 Серверная разработка express.js, для проекта MESTO
 
 ____
+# Ссылки для публичного доступа
+
+## Backend
+
+- [https://api.mestoproject.ml/](https://api.mestoproject.ml/)
+- [https://www.api.mestoproject.ml/](https://www.api.mestoproject.ml/)
+____
+## Публичный IPv4
+
+- 84.201.179.39
+____
+
+### frontend
+- [https://mestoproject.ml/](https://mestoproject.ml/)
+- [https://www.mestoproject.ml/](https://www.mestoproject.ml/)
+____
 
 ## Что использовалось
 
@@ -18,9 +34,6 @@ ____
 - npm install - устанвока зависимостей
 - npm run start - для запуска на локальном сервере
 - npm run dev - develop запуск, hot reload
-
-*Дефолтный url локального запуска - http://localhost:3000/
-
 ____
 
 ## Запросы к контроллеру User

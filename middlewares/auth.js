@@ -1,4 +1,8 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const Unauthorized = require('../customErrors/unauthorized');
+
+const errLogin = new Unauthorized('Need to login');
 
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
@@ -7,13 +11,13 @@ module.exports = (req, res, next) => {
 
     let payload;
     try {
-      payload = jwt.verify(cookieToken, 'qscwdvefb10537');
-    } catch (err) {
-      return res.status(401).send({ message: 'Need to login' });
+      payload = jwt.verify(cookieToken, process.env.NODE_ENV === 'prod' ? process.env.JWT_SECRET : 'dev-secret');
+    } catch (e) {
+      next(errLogin);
     }
     req.user = payload;
   } else {
-    return res.status(401).send({ message: 'Need to login' });
+    next(errLogin);
   }
   next();
 };

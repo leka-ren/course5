@@ -1,7 +1,9 @@
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const valid = require('validator');
-const regex = require('../regExp/urlValid');
+const regexUrl = require('../regExp/urlValid');
+
+const wrongData = new Error('Wrong email or password');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -19,7 +21,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     validate: {
-      validator: (str) => regex.test(str),
+      validator: (str) => regexUrl.test(str),
     },
     required: true,
   },
@@ -43,11 +45,11 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password').then((user) => {
     if (!user) {
-      return Promise.reject(new Error('Wrong email or password'));
+      return Promise.reject(wrongData);
     }
     return bcrypt.compare(password, user.password).then((match) => {
       if (!match) {
-        return Promise.reject(new Error('Wrong email or password'));
+        return Promise.reject(wrongData);
       }
       return user;
     });
